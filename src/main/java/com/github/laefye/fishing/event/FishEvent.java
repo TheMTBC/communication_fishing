@@ -19,7 +19,7 @@ public class FishEvent implements Listener {
             if (!(event.getCaught() instanceof CraftItem itemEntity)) {
                 return;
             }
-            itemEntity.setItemStack(plugin.getLoot(itemEntity.getItemStack()));
+            itemEntity.setItemStack(plugin.getLoot());
         }
     }
 }

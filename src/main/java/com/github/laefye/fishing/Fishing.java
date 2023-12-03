@@ -62,9 +62,9 @@ public final class Fishing extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public ItemStack getLoot(ItemStack def) {
+    public ItemStack getLoot() {
         var random = new Random();
-        return lootTypes.get(random.nextInt(lootTypes.size())).itemStack(def);
+        return lootTypes.get(random.nextInt(lootTypes.size())).itemStack();
     }
 
     public void deposit(Player player, int amount) {

@@ -2,19 +2,19 @@ loots:
   -
     category: fish
     item: COD
-    title: '<color:#2b6eff>Треска</color>'
+    title: '<color:#2b6eff>Cod</color>'
     cost: 5
   - category: fish
     item: PUFFERFISH
-    title: '<color:#2b6eff>Рыба Фуга</color>'
+    title: '<color:#2b6eff>Pufferfish</color>'
     cost: 5
   - category: fish
     item: SALMON
-    title: '<color:#2b6eff>Лосось</color>'
+    title: '<color:#2b6eff>Salmon</color>'
     cost: 5
   - category: fish
     item: TROPICAL_FISH
-    title: '<color:#2b6eff>Тропическая рыба</color>'
+    title: '<color:#2b6eff>Tropical fish</color>'
     cost: 10
 lang:
-  sold: '<color:#2b6eff>Ты продал рыбу на сумму %amount%</color>'
+  sold: '<color:#2b6eff>You sold fish for %amount% coins</color>'

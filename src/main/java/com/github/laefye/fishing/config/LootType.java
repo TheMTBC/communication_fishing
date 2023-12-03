@@ -18,7 +18,6 @@ public class LootType implements ConfigurationSerializable {
     private enum LootCategory {
         FISH,
         ITEM,
-        DEFAULT,
     }
     private final LootCategory category;
     private final Optional<Integer> cost;
@@ -33,7 +32,7 @@ public class LootType implements ConfigurationSerializable {
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
-        data.put("category", category == LootCategory.FISH ? "fish" : category == LootCategory.DEFAULT ? "default" : "item");
+        data.put("category", category == LootCategory.FISH ? "fish" : "item");
         data.put("item", item.name());
         title.ifPresent(component -> data.put("title", MiniMessage.miniMessage().serialize(component)));
         cost.ifPresent(integer -> data.put("cost", integer));
@@ -43,8 +42,9 @@ public class LootType implements ConfigurationSerializable {
     public static LootType deserialize(Map<String, Object> args) {
         return new LootType(
                 Optional.ofNullable((String) args.get("category"))
-                        .map(s -> s.equals("fish") ? LootCategory.FISH : s.equals("default") ? LootCategory.DEFAULT : LootCategory.ITEM)
-                        .orElse(LootCategory.DEFAULT),
+                        .filter(s -> s.equals("fish"))
+                        .map(s -> LootCategory.FISH)
+                        .orElse(LootCategory.ITEM),
                 Optional.ofNullable((String) args.get("item"))
                         .map(Material::matchMaterial)
                         .orElse(Material.COD),
@@ -72,13 +72,6 @@ public class LootType implements ConfigurationSerializable {
             itemStack = CraftItemStack.asCraftMirror(nms);
         }
         return itemStack;
-    }
-
-    public ItemStack itemStack(ItemStack def) {
-        if (category == LootCategory.DEFAULT) {
-            return def;
-        }
-        return itemStack();
     }
 
     @Override
