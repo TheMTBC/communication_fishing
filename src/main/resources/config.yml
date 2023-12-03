@@ -1,0 +1,18 @@
+loots:
+  -
+    category: fish
+    item: COD
+    title: '<reset><color:#2b6eff>Треска</color>'
+    cost: 5
+  - category: fish
+    item: PUFFERFISH
+    title: '<reset><color:#2b6eff>Рыба Фуга</color>'
+    cost: 5
+  - category: fish
+    item: SALMON
+    title: '<reset><color:#2b6eff>Лосось</color>'
+    cost: 5
+  - category: fish
+    item: TROPICAL_FISH
+    title: '<reset><color:#2b6eff>Тропическая рыба</color>'
+    cost: 10
