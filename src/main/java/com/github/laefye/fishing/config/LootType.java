@@ -89,4 +89,13 @@ public class LootType implements ConfigurationSerializable {
                 ", category=" + category +
                 '}';
     }
+
+    public static Optional<Integer> getCost(ItemStack itemStack) {
+        var stack = CraftItemStack.unwrap(itemStack);
+        var tagCompound = stack.v();
+        if (tagCompound != null) {
+            return Optional.of(tagCompound.h("fishingCost") * itemStack.getAmount());
+        }
+        return Optional.empty();
+    }
 }

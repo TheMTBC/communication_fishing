@@ -16,3 +16,5 @@ loots:
     item: TROPICAL_FISH
     title: '<reset><color:#2b6eff>Тропическая рыба</color>'
     cost: 10
+lang:
+  sold: '<color:#2b6eff>Ты продал рыбу на сумму %amount%</color>'
