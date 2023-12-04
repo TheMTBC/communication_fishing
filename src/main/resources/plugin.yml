@@ -1,5 +1,5 @@
 name: fishing
-version: '1.20.2-1'
+version: '${version}'
 main: com.github.laefye.fishing.Fishing
 api-version: '1.20'
 softdepend:

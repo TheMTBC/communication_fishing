@@ -3,8 +3,10 @@ package com.github.laefye.fishing;
 import com.github.laefye.fishing.config.Lang;
 import com.github.laefye.fishing.config.LootType;
 import com.github.laefye.fishing.event.FishEvent;
+import com.github.laefye.services.CustomItemService;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -46,7 +48,7 @@ public final class Fishing extends JavaPlugin {
 
     private void loadDependencies() {
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
-            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+            var rsp = getServer().getServicesManager().getRegistration(Economy.class);
             if (rsp != null) {
                 economy = rsp.getProvider();
             }
@@ -63,8 +65,9 @@ public final class Fishing extends JavaPlugin {
     }
 
     public ItemStack getLoot() {
-        var random = new Random();
-        return lootTypes.get(random.nextInt(lootTypes.size())).itemStack();
+        var loots = new Randomizer();
+        lootTypes.forEach(lootType -> loots.add(lootType.getChance()));
+        return lootTypes.get(loots.random(new Random())).itemStack();
     }
 
     public void deposit(Player player, int amount) {
@@ -73,5 +76,15 @@ public final class Fishing extends JavaPlugin {
             return;
         }
         economy.depositPlayer(player, amount);
+    }
+
+    public static CustomItemService getCustomItemService(Server server) {
+        if (server.getPluginManager().getPlugin("MagicPlugin") != null) {
+            var rsp = server.getServicesManager().getRegistration(CustomItemService.class);
+            if (rsp != null) {
+                return rsp.getProvider();
+            }
+        }
+        return null;
     }
 }

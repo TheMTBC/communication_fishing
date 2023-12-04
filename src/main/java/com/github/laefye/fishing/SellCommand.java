@@ -23,7 +23,7 @@ public class SellCommand implements CommandExecutor {
         var stacks = new ArrayList<ItemStack>();
         for (var item : player.getInventory()) {
             var cost = LootType.getCost(item);
-            if (!cost.isPresent() || cost.get() <= 0) {
+            if (cost.isEmpty() || cost.get() <= 0) {
                 continue;
             }
             amount += cost.get();

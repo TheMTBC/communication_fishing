@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public class Lang implements ConfigurationSerializable {
     private final Component sold;
+    private static final String SOLD = "sold";
+    private static final String PLACEHOLDER_AMOUNT = "%amount%";
 
     private Lang(Component sold) {
         this.sold = sold;
@@ -19,19 +21,19 @@ public class Lang implements ConfigurationSerializable {
     @Override
     public @NotNull Map<String, Object> serialize() {
         var data = new HashMap<String, Object>();
-        data.put("sold", MiniMessage.miniMessage().serialize(sold));
+        data.put(SOLD, MiniMessage.miniMessage().serialize(sold));
         return data;
     }
 
     public static Lang deserialize(Map<String, Object> args) {
         return new Lang(
-                Optional.ofNullable((String) args.get("sold"))
+                Optional.ofNullable((String) args.get(SOLD))
                         .map(s -> MiniMessage.miniMessage().deserialize(s))
                         .orElse(Component.empty())
         );
     }
 
     public Component getSold(int amount) {
-        return sold.replaceText(builder -> builder.match("%amount%").replacement(Integer.toString(amount)));
+        return sold.replaceText(builder -> builder.match(PLACEHOLDER_AMOUNT).replacement(Integer.toString(amount)));
     }
 }
