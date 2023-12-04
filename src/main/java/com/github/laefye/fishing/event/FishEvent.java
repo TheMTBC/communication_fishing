@@ -1,7 +1,7 @@
 package com.github.laefye.fishing.event;
 
 import com.github.laefye.fishing.Fishing;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftItem;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -16,7 +16,7 @@ public class FishEvent implements Listener {
     @EventHandler
     public void onFish(PlayerFishEvent event) {
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
-            if (!(event.getCaught() instanceof CraftItem itemEntity)) {
+            if (!(event.getCaught() instanceof Item itemEntity)) {
                 return;
             }
             itemEntity.setItemStack(plugin.getLoot());

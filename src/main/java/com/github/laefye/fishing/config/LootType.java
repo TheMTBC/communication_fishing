@@ -1,11 +1,11 @@
 package com.github.laefye.fishing.config;
 
+import com.github.laefye.tools.ItemTools;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +21,7 @@ public class LootType implements ConfigurationSerializable {
     }
     private final LootCategory category;
     private final Optional<Integer> cost;
+    public static String FISHING_COST = "fishingCost";
 
     private LootType(LootCategory category, Material item, Optional<Component> title, Optional<Integer> cost) {
         this.category = category;
@@ -65,12 +66,9 @@ public class LootType implements ConfigurationSerializable {
 
     public ItemStack itemStack() {
         var itemStack = new ItemStack(item);
-        if (category == LootCategory.FISH) {
-            Optional.ofNullable(itemStack.getItemMeta()).map(this::itemMeta).ifPresent(itemStack::setItemMeta);
-            var nms = CraftItemStack.unwrap(itemStack);
-            cost.ifPresent(integer -> nms.w().a("fishingCost", integer));
-            itemStack = CraftItemStack.asCraftMirror(nms);
-        }
+        var compound = ItemTools.getOrCreateItemTag(itemStack);
+        cost.ifPresent(cost -> compound.setInt(FISHING_COST, cost));
+        ItemTools.setItemTag(itemStack, compound);
         return itemStack;
     }
 
@@ -84,11 +82,6 @@ public class LootType implements ConfigurationSerializable {
     }
 
     public static Optional<Integer> getCost(ItemStack itemStack) {
-        var stack = CraftItemStack.unwrap(itemStack);
-        var tagCompound = stack.v();
-        if (tagCompound != null) {
-            return Optional.of(tagCompound.h("fishingCost") * itemStack.getAmount());
-        }
-        return Optional.empty();
+        return ItemTools.getItemTag(itemStack).map(value -> value.getInt(FISHING_COST) * itemStack.getAmount());
     }
 }

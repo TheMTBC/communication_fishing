@@ -6,7 +6,7 @@
 
     <groupId>com.github.laefye</groupId>
     <artifactId>fishing</artifactId>
-    <version>1.0.0</version>
+    <version>1.20.2-1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -50,11 +50,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.purpurmc</groupId>
-            <artifactId>purpur</artifactId>
-            <scope>system</scope>
-            <version>1.20.2</version>
-            <systemPath>${project.basedir}/libs/purpur-1.20.2.jar</systemPath>
+            <groupId>com.github.Laefye</groupId>
+            <artifactId>MagicPlugin</artifactId>
+            <version>1.20.2-1</version>
+
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
