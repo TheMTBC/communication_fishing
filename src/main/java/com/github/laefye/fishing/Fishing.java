@@ -41,7 +41,6 @@ public final class Fishing extends JavaPlugin {
                 continue;
             }
             lootTypes.add(LootType.deserialize(map));
-            getLogger().info("Loot type -> " + lootTypes.get(lootTypes.size() - 1));
         }
         lang = Lang.deserialize(((MemorySection) config.get("lang")).getValues(false));
     }
