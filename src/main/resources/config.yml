@@ -1,24 +1,5 @@
-loots:
-  -
-    category: fish
-    item: COD
-    title: '<color:#2b6eff>Cod</color>'
-    cost: 5
-    chance: 1
-  - category: fish
-    item: PUFFERFISH
-    title: '<color:#2b6eff>Pufferfish</color>'
-    cost: 5
-    chance: 1
-  - category: fish
-    item: SALMON
-    title: '<color:#2b6eff>Salmon</color>'
-    cost: 5
-    chance: 1
-  - category: fish
-    item: TROPICAL_FISH
-    title: '<color:#2b6eff>Tropical fish</color>'
-    cost: 10
-    chance: 1
 lang:
   sold: '<color:#2b6eff>You sold fish for %amount% coins</color>'
+  size.1: 'Small'
+  size.2: 'Medium'
+  size.3: 'Big'

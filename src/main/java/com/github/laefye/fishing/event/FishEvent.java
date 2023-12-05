@@ -1,7 +1,6 @@
 package com.github.laefye.fishing.event;
 
 import com.github.laefye.fishing.Fishing;
-import com.github.laefye.tools.ItemTools;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

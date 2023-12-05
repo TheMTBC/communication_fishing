@@ -1,10 +1,9 @@
 package com.github.laefye.fishing;
 
-import com.github.laefye.fishing.config.LootType;
+import com.github.laefye.fishing.config.FishLoot;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Fish;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +21,7 @@ public class SellCommand implements CommandExecutor {
         int amount = 0;
         var stacks = new ArrayList<ItemStack>();
         for (var item : player.getInventory()) {
-            var cost = LootType.getCost(item);
+            var cost = FishLoot.getCost(item);
             if (cost.isEmpty() || cost.get() <= 0) {
                 continue;
             }

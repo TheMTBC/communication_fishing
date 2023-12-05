@@ -1,23 +1,27 @@
 package com.github.laefye.fishing;
 
+import com.github.laefye.fishing.config.ILootType;
 import com.github.laefye.fishing.config.Lang;
-import com.github.laefye.fishing.config.LootType;
+import com.github.laefye.fishing.config.Loot;
 import com.github.laefye.fishing.event.FishEvent;
-import com.github.laefye.services.CustomItemService;
+import com.github.laefye.services.item.CustomItemService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public final class Fishing extends JavaPlugin {
-    private final ArrayList<LootType> lootTypes = new ArrayList<>();
+    private final ArrayList<ILootType> loots = new ArrayList<>();
     private Economy economy;
     private Lang lang;
 
@@ -30,17 +34,37 @@ public final class Fishing extends JavaPlugin {
                 .ifPresent(pluginCommand -> pluginCommand.setExecutor(new SellCommand(this)));
     }
 
+    private void saveDefaultLootTable() {
+        var lootTable = new File(getDataFolder(), "loots.json");
+        if (!lootTable.exists()) {
+            lootTable.getParentFile().mkdirs();
+            saveResource("loots.json", false);
+        }
+    }
+
+    private JsonArray readLootTable() {
+        var lootTable = new File(getDataFolder(), "loots.json");
+        try {
+            var reader = new FileReader(lootTable);
+            var jsonArray = JsonParser.parseReader(reader);
+            reader.close();
+            if (jsonArray.isJsonArray()) {
+                return jsonArray.getAsJsonArray();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new JsonArray();
+    }
+
     private void loadConfig() {
         saveDefaultConfig();
+        saveDefaultLootTable();
         FileConfiguration config = getConfig();
-        lootTypes.clear();
-        for (Object d : Optional.ofNullable(
-                (List) config.getList("loots")).orElse(List.of()
-        )) {
-            if (!(d instanceof Map map)) {
-                continue;
-            }
-            lootTypes.add(LootType.deserialize(map));
+        loots.clear();
+        for (var loot : readLootTable()) {
+            Optional.ofNullable(Loot.deserialize(loot.getAsJsonObject()))
+                    .ifPresent(loots::add);
         }
         lang = Lang.deserialize(((MemorySection) config.get("lang")).getValues(false));
     }
@@ -64,9 +88,12 @@ public final class Fishing extends JavaPlugin {
     }
 
     public ItemStack getLoot() {
+        if (this.loots.isEmpty()) {
+            return ItemStack.empty();
+        }
         var loots = new Randomizer();
-        lootTypes.forEach(lootType -> loots.add(lootType.getChance()));
-        return lootTypes.get(loots.random(new Random())).itemStack();
+        this.loots.forEach(lootType -> loots.add(lootType.getChance()));
+        return this.loots.get(loots.random(new Random())).getItemStack();
     }
 
     public void deposit(Player player, int amount) {
