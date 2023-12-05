@@ -1,4 +1,4 @@
-package com.github.laefye.fishing.config;
+package com.github.laefye.fishing.config.loottable;
 
 import com.github.laefye.craft.Compound;
 import com.github.laefye.craft.ItemTools;

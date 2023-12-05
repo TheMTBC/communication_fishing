@@ -1,6 +1,6 @@
 package com.github.laefye.fishing;
 
-import com.github.laefye.fishing.config.FishLoot;
+import com.github.laefye.fishing.config.loottable.FishLoot;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

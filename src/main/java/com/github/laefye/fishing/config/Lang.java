@@ -2,38 +2,75 @@ package com.github.laefye.fishing.config;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.configuration.MemorySection;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class Lang implements ConfigurationSerializable {
-    private final Component sold;
-    private static final String SOLD = "sold";
-    private static final String PLACEHOLDER_AMOUNT = "%amount%";
+public class Lang {
+    public static class Size {
+        private final Component small;
+        private final Component medium;
+        private final Component big;
 
-    private Lang(Component sold) {
-        this.sold = sold;
+        private Size(Component small, Component medium, Component big) {
+            this.small = small;
+            this.medium = medium;
+            this.big = big;
+        }
+
+        public static Size deserialize(Map<String, Object> args) {
+            return new Size(
+                    Optional.ofNullable((String) args.get("small"))
+                            .map(s -> MiniMessage.miniMessage().deserialize(s))
+                            .orElse(Component.empty()),
+                    Optional.ofNullable((String) args.get("medium"))
+                            .map(s -> MiniMessage.miniMessage().deserialize(s))
+                            .orElse(Component.empty()),
+                    Optional.ofNullable((String) args.get("big"))
+                            .map(s -> MiniMessage.miniMessage().deserialize(s))
+                            .orElse(Component.empty())
+                );
+        }
+
+        public Component getBig() {
+            return big;
+        }
+
+        public Component getMedium() {
+            return medium;
+        }
+
+        public Component getSmall() {
+            return small;
+        }
     }
 
-    @Override
-    public @NotNull Map<String, Object> serialize() {
-        var data = new HashMap<String, Object>();
-        data.put(SOLD, MiniMessage.miniMessage().serialize(sold));
-        return data;
+    private final Component sold;
+    private final Size size;
+
+    private Lang(Component sold, Size size) {
+        this.sold = sold;
+        this.size = size;
     }
 
     public static Lang deserialize(Map<String, Object> args) {
         return new Lang(
-                Optional.ofNullable((String) args.get(SOLD))
+                Optional.ofNullable((String) args.get("sold"))
                         .map(s -> MiniMessage.miniMessage().deserialize(s))
-                        .orElse(Component.empty())
+                        .orElse(Component.empty()),
+                Optional.ofNullable((MemorySection) args.get("size"))
+                        .map(memorySection -> memorySection.getValues(false))
+                        .map(Size::deserialize)
+                        .get()
         );
     }
 
     public Component getSold(int amount) {
-        return sold.replaceText(builder -> builder.match(PLACEHOLDER_AMOUNT).replacement(Integer.toString(amount)));
+        return sold.replaceText(builder -> builder.match("%amount%").replacement(Integer.toString(amount)));
+    }
+
+    public Size getSize() {
+        return size;
     }
 }

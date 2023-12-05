@@ -1,4 +1,4 @@
-package com.github.laefye.fishing.config;
+package com.github.laefye.fishing.config.loottable;
 
 import com.github.laefye.fishing.Fishing;
 import com.google.gson.JsonObject;
@@ -14,10 +14,10 @@ public class Loot {
                 new ItemStack(Material.valueOf(id));
     }
 
-    public static ILootType deserialize(JsonObject jsonObject) {
+    public static ILootType deserialize(Fishing plugin, JsonObject jsonObject) {
         var category = jsonObject.get("category").getAsString();
         if (category.equals("fish")) {
-            return FishLoot.deserialize(jsonObject);
+            return FishLoot.deserialize(plugin, jsonObject);
         }
         if (category.equals("item")) {
             return ItemLoot.deserialize(jsonObject);

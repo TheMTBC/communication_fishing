@@ -1,4 +1,4 @@
-package com.github.laefye.fishing.config;
+package com.github.laefye.fishing.config.loottable;
 
 import org.bukkit.inventory.ItemStack;
 

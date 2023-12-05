@@ -1,8 +1,8 @@
 package com.github.laefye.fishing;
 
-import com.github.laefye.fishing.config.ILootType;
+import com.github.laefye.fishing.config.loottable.ILootType;
 import com.github.laefye.fishing.config.Lang;
-import com.github.laefye.fishing.config.Loot;
+import com.github.laefye.fishing.config.loottable.Loot;
 import com.github.laefye.fishing.event.FishEvent;
 import com.github.laefye.services.item.CustomItemService;
 import com.google.gson.JsonArray;
@@ -63,7 +63,7 @@ public final class Fishing extends JavaPlugin {
         FileConfiguration config = getConfig();
         loots.clear();
         for (var loot : readLootTable()) {
-            Optional.ofNullable(Loot.deserialize(loot.getAsJsonObject()))
+            Optional.ofNullable(Loot.deserialize(this, loot.getAsJsonObject()))
                     .ifPresent(loots::add);
         }
         lang = Lang.deserialize(((MemorySection) config.get("lang")).getValues(false));
