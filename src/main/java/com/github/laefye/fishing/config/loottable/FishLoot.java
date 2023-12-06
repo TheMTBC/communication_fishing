@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class FishLoot implements ILootType {
-    private Fishing plugin;
+    private final Fishing plugin;
     private final int chance;
     private final String item;
     private final Component title;
