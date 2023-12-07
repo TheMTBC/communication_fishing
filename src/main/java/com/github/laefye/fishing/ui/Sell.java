@@ -79,7 +79,7 @@ public class Sell extends Ui {
     @Override
     public void drag(InventoryDragEvent event) {
         var items = event.getNewItems();
-        long count = items.keySet().stream().filter(this::checkSlotInBorder).count();
+        long count = items.keySet().stream().filter(integer -> checkSlotInBorder(integer) || ItemEntry.getCost(items.get(integer)) <= 0).count();
         if (count > 0) {
             event.setCancelled(true);
         }

@@ -6,7 +6,6 @@ import com.github.laefye.fishing.FishingPlugin;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ItemEntry {
     private final String material;
@@ -36,27 +34,6 @@ public class ItemEntry {
         this.costBySize = costBySize;
     }
 
-    private ItemMeta itemMeta(ItemMeta itemMeta, Component size) {
-        if (title == null) {
-            return itemMeta;
-        }
-        itemMeta.displayName(
-                Component.text()
-                        .decoration(TextDecoration.ITALIC, false)
-                        .append(title)
-                        .build()
-        );
-        if (size != null) {
-            itemMeta.lore(List.of(
-                    Component.text()
-                            .decoration(TextDecoration.ITALIC, false)
-                            .append(size)
-                            .build()
-            ));
-        }
-        return itemMeta;
-    }
-
     private ItemStack getItem(String id) {
         return id.startsWith("#") ?
                 plugin.getMagicPlugin().getItemManager().give(id.substring(1))
@@ -64,28 +41,47 @@ public class ItemEntry {
                 new ItemStack(Material.valueOf(id));
     }
 
+    private static class Transaction {
+
+        public ItemStack itemStack;
+        public Component title;
+        public List<Component> lore;
+        public Compound compound;
+
+        private Transaction(ItemStack itemStack, Component title, List<Component> lore, Compound compound) {
+            this.itemStack = itemStack;
+            this.title = title;
+            this.lore = lore;
+            this.compound = compound;
+        }
+
+        private ItemMeta itemMeta(ItemMeta itemMeta) {
+            Optional.ofNullable(title).ifPresent(itemMeta::displayName);
+            Optional.ofNullable(lore).ifPresent(itemMeta::lore);
+            return itemMeta;
+        }
+
+        public ItemStack transact() {
+            var itemStack = Optional.ofNullable(compound)
+                    .map(compound -> ItemTools.setItemTag(this.itemStack, compound))
+                    .orElse(this.itemStack);
+            Optional.ofNullable(itemStack.getItemMeta()).map(this::itemMeta).ifPresent(itemStack::setItemMeta);
+            return itemStack;
+        }
+    }
+
     public ItemStack getItemStack() {
-        var itemStack = getItem(material);
-        var compound = new Compound();
-        AtomicReference<String> size = new AtomicReference<>(null);
-        Optional.ofNullable(cost)
-                .ifPresent(integer -> compound.putInt(FISHING_COST, cost));
-        Optional.ofNullable(costBySize)
-                .ifPresent(jsonObject -> {
-                    var random = new Random();
-                    var sz = jsonObject.keySet().stream().toList().get(random.nextInt(jsonObject.size()));
-                    size.set(sz);
-                    compound.putInt(FISHING_COST, jsonObject.get(sz).getAsInt());
-                });
-        Optional.ofNullable(nbt)
-                .ifPresent(jsonObject -> Compound.appendFromJsonObject(compound, jsonObject));
-        itemStack = ItemTools.setItemTag(itemStack, compound);;
-        Optional.ofNullable(itemStack.getItemMeta())
-                .map(itemMeta -> itemMeta(itemMeta, Optional.ofNullable(size.get())
-                        .map(sz -> plugin.getLang().getSize().getSize(sz))
-                        .orElse(Component.text(size.get()))))
-                .ifPresent(itemStack::setItemMeta);
-        return itemStack;
+        var transaction = new Transaction(getItem(material), title, null, new Compound());
+        Optional.ofNullable(nbt).ifPresent(jsonObject -> Compound.appendFromJsonObject(transaction.compound, jsonObject));
+        if (costBySize != null) {
+            var random = new Random();
+            var size = costBySize.keySet().stream().toList().get(random.nextInt(costBySize.size()));
+            transaction.compound.putInt(FISHING_COST, costBySize.get(size).getAsInt());
+            transaction.lore = List.of(plugin.getLang().getSize().getSize(size));
+        } else if (cost != null) {
+            transaction.compound.putInt(FISHING_COST, cost);
+        }
+        return transaction.transact();
     }
 
     public static ItemEntry deserialize(FishingPlugin plugin, JsonObject jsonObject) {
