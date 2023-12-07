@@ -2,27 +2,34 @@ package com.github.laefye.fishing.config.loottable;
 
 import com.github.laefye.craft.Compound;
 import com.github.laefye.craft.ItemTools;
+import com.github.laefye.fishing.FishingPlugin;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Optional;
 
-public class ItemLoot implements ILootType {
-    private final int chance;
-    private final String item;
+public class ItemEntry {
+    private final String material;
     private final Component title;
     private final JsonObject nbt;
+    private final Integer cost;
+    private static final String FISHING_COST = "fishingCost";
+    private final FishingPlugin plugin;
 
-    private ItemLoot(int chance, String item, Component title, JsonObject nbt) {
-        this.chance = chance;
-        this.item = item;
+
+    private ItemEntry(FishingPlugin plugin, String material, Component title, JsonObject nbt, Integer cost) {
+        this.plugin = plugin;
+        this.material = material;
         this.title = title;
         this.nbt = nbt;
+        this.cost = cost;
     }
 
     private ItemMeta itemMeta(ItemMeta itemMeta) {
@@ -38,37 +45,46 @@ public class ItemLoot implements ILootType {
         return itemMeta;
     }
 
-    public int getChance() {
-        return chance;
+    private ItemStack getItem(String id) {
+        return id.startsWith("#") ?
+                FishingPlugin.getCustomItemService(plugin.getServer()).give(id.substring(1))
+                        .orElse(ItemStack.empty()) :
+                new ItemStack(Material.valueOf(id));
     }
 
-    @Override
     public ItemStack getItemStack() {
-        var originalItemStack = Loot.getItem(item);
+        var originalItemStack = getItem(material);
         var itemStack = Optional.ofNullable(nbt)
                 .map(Compound::fromJsonObject)
-                .map(compound -> ItemTools.setItemTag(originalItemStack, compound))
+                .or(() -> Optional.of(new Compound()))
+                .map(compound -> {
+                    Optional.ofNullable(cost)
+                            .ifPresent(integer -> compound.putInt(FISHING_COST, cost));
+                    return ItemTools.setItemTag(originalItemStack, compound);
+                })
                 .orElse(originalItemStack);
         Optional.ofNullable(itemStack.getItemMeta()).map(this::itemMeta).ifPresent(itemStack::setItemMeta);
         return itemStack;
     }
 
-    @Override
-    public Category getCategory() {
-        return Category.ITEM;
-    }
-
-    public static ItemLoot deserialize(JsonObject jsonObject) {
-        return new ItemLoot(
-                jsonObject.get("chance").getAsInt(),
-                jsonObject.get("item").getAsString(),
+    public static ItemEntry deserialize(FishingPlugin plugin, JsonObject jsonObject) {
+        return new ItemEntry(
+                plugin,
+                jsonObject.get("material").getAsString(),
                 Optional.ofNullable(jsonObject.get("title"))
                         .map(JsonElement::getAsString)
                         .map(s -> MiniMessage.miniMessage().deserialize(s))
                         .orElse(null),
                 Optional.ofNullable(jsonObject.get("nbt"))
                         .map(JsonElement::getAsJsonObject)
+                        .orElse(null),
+                Optional.ofNullable(jsonObject.get("cost"))
+                        .map(JsonElement::getAsInt)
                         .orElse(null)
         );
+    }
+
+    public static int getCost(ItemStack itemStack) {
+        return ItemTools.getItemTag(itemStack).map(compound -> compound.getInt(FISHING_COST)).orElse(0);
     }
 }

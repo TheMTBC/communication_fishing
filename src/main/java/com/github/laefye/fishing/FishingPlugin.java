@@ -1,8 +1,7 @@
 package com.github.laefye.fishing;
 
-import com.github.laefye.fishing.config.loottable.ILootType;
 import com.github.laefye.fishing.config.Lang;
-import com.github.laefye.fishing.config.loottable.Loot;
+import com.github.laefye.fishing.config.loottable.LootEntry;
 import com.github.laefye.fishing.event.FishEvent;
 import com.github.laefye.services.item.CustomItemService;
 import com.google.gson.JsonArray;
@@ -21,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 
 public final class FishingPlugin extends JavaPlugin {
-    private final ArrayList<ILootType> loots = new ArrayList<>();
+    private final ArrayList<LootEntry> loots = new ArrayList<>();
     private Economy economy;
     private Lang lang;
 
@@ -63,7 +62,7 @@ public final class FishingPlugin extends JavaPlugin {
         FileConfiguration config = getConfig();
         loots.clear();
         for (var loot : readLootTable()) {
-            Optional.ofNullable(Loot.deserialize(this, loot.getAsJsonObject()))
+            Optional.ofNullable(LootEntry.deserialize(this, loot.getAsJsonObject()))
                     .ifPresent(loots::add);
         }
         lang = Lang.deserialize(((MemorySection) config.get("lang")).getValues(false));
@@ -91,9 +90,11 @@ public final class FishingPlugin extends JavaPlugin {
         if (this.loots.isEmpty()) {
             return ItemStack.empty();
         }
-        var loots = new Randomizer();
-        this.loots.forEach(lootType -> loots.add(lootType.getChance()));
-        return this.loots.get(loots.random(new Random())).getItemStack();
+        var random = new Random();
+        var rare = random.nextInt(1, 10);
+        var loots = new ArrayList<>(this.loots.stream().filter(lootEntry -> lootEntry.getRare() < rare).toList());
+        var loot = loots.get(random.nextInt(loots.size()));
+        return loot.getItemEntry().getItemStack();
     }
 
     public void deposit(Player player, int amount) {

@@ -1,30 +1,34 @@
 [
   {
-    "category": "fish",
-    "item": "COD",
-    "chance": 1,
-    "title": "<color:#2b6eff>Cod</color>",
-    "cost": 5
+    "item": {
+      "cost": 5,
+      "material": "COD",
+      "title": "<color:#2b6eff>Cod</color>"
+    },
+    "rare": 0
   },
   {
-    "category": "fish",
-    "item": "PUFFERFISH",
-    "chance": 1,
-    "title": "<color:#2b6eff>Pufferfish</color>",
-    "cost": 5
+    "item": {
+      "cost": 5,
+      "material": "PUFFERFISH",
+      "title": "<color:#2b6eff>Pufferfish</color>"
+    },
+    "rare": 0
   },
   {
-    "category": "fish",
-    "item": "SALMON",
-    "chance": 1,
-    "title": "<color:#2b6eff>Salmon</color>",
-    "cost": 5
+    "item": {
+      "cost": 5,
+      "material": "SALMON",
+      "title": "<color:#2b6eff>Salmon</color>"
+    },
+    "rare": 0
   },
   {
-    "category": "fish",
-    "item": "TROPICAL_FISH",
-    "chance": 1,
-    "title": "<color:#2b6eff>Tropical fish</color>",
-    "cost": 5
+    "item": {
+      "cost": 5,
+      "material": "TROPICAL_FISH",
+      "title": "<color:#2b6eff>Tropical fish</color>"
+    },
+    "rare": 0
   }
 ]
