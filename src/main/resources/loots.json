@@ -1,7 +1,11 @@
 [
   {
     "item": {
-      "cost": 5,
+      "cost": {
+        "small": 5,
+        "medium": 7,
+        "big": 10
+      },
       "material": "COD",
       "title": "<color:#2b6eff>Cod</color>"
     },
@@ -9,7 +13,11 @@
   },
   {
     "item": {
-      "cost": 5,
+      "cost": {
+        "small": 5,
+        "medium": 7,
+        "big": 10
+      },
       "material": "PUFFERFISH",
       "title": "<color:#2b6eff>Pufferfish</color>"
     },
@@ -17,7 +25,11 @@
   },
   {
     "item": {
-      "cost": 5,
+      "cost": {
+        "small": 5,
+        "medium": 7,
+        "big": 10
+      },
       "material": "SALMON",
       "title": "<color:#2b6eff>Salmon</color>"
     },
@@ -25,7 +37,11 @@
   },
   {
     "item": {
-      "cost": 5,
+      "cost": {
+        "small": 5,
+        "medium": 7,
+        "big": 10
+      },
       "material": "TROPICAL_FISH",
       "title": "<color:#2b6eff>Tropical fish</color>"
     },

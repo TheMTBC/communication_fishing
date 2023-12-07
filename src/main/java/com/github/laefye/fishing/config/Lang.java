@@ -9,40 +9,18 @@ import java.util.Optional;
 
 public class Lang {
     public static class Size {
-        private final Component small;
-        private final Component medium;
-        private final Component big;
+        private final Map<String, Object> sizes;
 
-        private Size(Component small, Component medium, Component big) {
-            this.small = small;
-            this.medium = medium;
-            this.big = big;
+        private Size(Map<String, Object> sizes) {
+            this.sizes = sizes;
         }
 
         public static Size deserialize(Map<String, Object> args) {
-            return new Size(
-                    Optional.ofNullable((String) args.get("small"))
-                            .map(s -> MiniMessage.miniMessage().deserialize(s))
-                            .orElse(Component.empty()),
-                    Optional.ofNullable((String) args.get("medium"))
-                            .map(s -> MiniMessage.miniMessage().deserialize(s))
-                            .orElse(Component.empty()),
-                    Optional.ofNullable((String) args.get("big"))
-                            .map(s -> MiniMessage.miniMessage().deserialize(s))
-                            .orElse(Component.empty())
-                );
+            return new Size(args);
         }
 
-        public Component getBig() {
-            return big;
-        }
-
-        public Component getMedium() {
-            return medium;
-        }
-
-        public Component getSmall() {
-            return small;
+        public Component getSize(String name) {
+            return MiniMessage.miniMessage().deserialize(Optional.ofNullable((String) sizes.get(name)).orElse(name));
         }
     }
 

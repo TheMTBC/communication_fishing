@@ -8,31 +8,35 @@ import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ItemEntry {
     private final String material;
     private final Component title;
     private final JsonObject nbt;
     private final Integer cost;
+    private final JsonObject costBySize;
     private static final String FISHING_COST = "fishingCost";
     private final FishingPlugin plugin;
 
 
-    private ItemEntry(FishingPlugin plugin, String material, Component title, JsonObject nbt, Integer cost) {
+    private ItemEntry(FishingPlugin plugin, String material, Component title, JsonObject nbt, Integer cost, JsonObject costBySize) {
         this.plugin = plugin;
         this.material = material;
         this.title = title;
         this.nbt = nbt;
         this.cost = cost;
+        this.costBySize = costBySize;
     }
 
-    private ItemMeta itemMeta(ItemMeta itemMeta) {
+    private ItemMeta itemMeta(ItemMeta itemMeta, Component size) {
         if (title == null) {
             return itemMeta;
         }
@@ -42,6 +46,14 @@ public class ItemEntry {
                         .append(title)
                         .build()
         );
+        if (size != null) {
+            itemMeta.lore(List.of(
+                    Component.text()
+                            .decoration(TextDecoration.ITALIC, false)
+                            .append(size)
+                            .build()
+            ));
+        }
         return itemMeta;
     }
 
@@ -55,12 +67,24 @@ public class ItemEntry {
     public ItemStack getItemStack() {
         var itemStack = getItem(material);
         var compound = new Compound();
+        AtomicReference<String> size = new AtomicReference<>(null);
         Optional.ofNullable(cost)
                 .ifPresent(integer -> compound.putInt(FISHING_COST, cost));
+        Optional.ofNullable(costBySize)
+                .ifPresent(jsonObject -> {
+                    var random = new Random();
+                    var sz = jsonObject.keySet().stream().toList().get(random.nextInt(jsonObject.size()));
+                    size.set(sz);
+                    compound.putInt(FISHING_COST, jsonObject.get(sz).getAsInt());
+                });
         Optional.ofNullable(nbt)
                 .ifPresent(jsonObject -> Compound.appendFromJsonObject(compound, jsonObject));
         itemStack = ItemTools.setItemTag(itemStack, compound);;
-        Optional.ofNullable(itemStack.getItemMeta()).map(this::itemMeta).ifPresent(itemStack::setItemMeta);
+        Optional.ofNullable(itemStack.getItemMeta())
+                .map(itemMeta -> itemMeta(itemMeta, Optional.ofNullable(size.get())
+                        .map(sz -> plugin.getLang().getSize().getSize(sz))
+                        .orElse(Component.text(size.get()))))
+                .ifPresent(itemStack::setItemMeta);
         return itemStack;
     }
 
@@ -76,9 +100,13 @@ public class ItemEntry {
                         .map(JsonElement::getAsJsonObject)
                         .orElse(null),
                 Optional.ofNullable(jsonObject.get("cost"))
+                        .filter(JsonElement::isJsonPrimitive)
                         .map(JsonElement::getAsInt)
-                        .orElse(null)
-        );
+                        .orElse(null),
+                Optional.ofNullable(jsonObject.get("cost"))
+                        .filter(JsonElement::isJsonObject)
+                        .map(JsonElement::getAsJsonObject)
+                        .orElse(null));
     }
 
     public static int getCost(ItemStack itemStack) {
