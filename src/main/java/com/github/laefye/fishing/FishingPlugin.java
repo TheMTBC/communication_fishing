@@ -20,7 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public final class Fishing extends JavaPlugin {
+public final class FishingPlugin extends JavaPlugin {
     private final ArrayList<ILootType> loots = new ArrayList<>();
     private Economy economy;
     private Lang lang;

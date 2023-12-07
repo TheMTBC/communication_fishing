@@ -1,6 +1,6 @@
-name: fishing
+name: Fishing
 version: '${version}'
-main: com.github.laefye.fishing.Fishing
+main: com.github.laefye.fishing.FishingPlugin
 api-version: '1.20'
 softdepend:
   - Vault

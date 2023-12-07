@@ -1,7 +1,7 @@
 package com.github.laefye.fishing.config.loottable;
 
 import com.github.laefye.craft.ItemTools;
-import com.github.laefye.fishing.Fishing;
+import com.github.laefye.fishing.FishingPlugin;
 import com.github.laefye.fishing.Randomizer;
 import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
@@ -13,14 +13,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class FishLoot implements ILootType {
-    private final Fishing plugin;
+    private final FishingPlugin plugin;
     private final int chance;
     private final String item;
     private final Component title;
     private final int cost;
     private static final String FISHING_COST = "fishingCost";
 
-    private FishLoot(Fishing plugin, int chance, String item, Component title, int cost) {
+    private FishLoot(FishingPlugin plugin, int chance, String item, Component title, int cost) {
         this.plugin = plugin;
         this.chance = chance;
         this.item = item;
@@ -87,7 +87,7 @@ public class FishLoot implements ILootType {
         return Category.FISH;
     }
 
-    public static FishLoot deserialize(Fishing plugin, JsonObject jsonObject) {
+    public static FishLoot deserialize(FishingPlugin plugin, JsonObject jsonObject) {
         return new FishLoot(
                 plugin,
                 jsonObject.get("chance").getAsInt(),

@@ -1,15 +1,15 @@
 package com.github.laefye.fishing.event;
 
-import com.github.laefye.fishing.Fishing;
+import com.github.laefye.fishing.FishingPlugin;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 
 public class FishEvent implements Listener {
-    private final Fishing plugin;
+    private final FishingPlugin plugin;
 
-    public FishEvent(Fishing plugin) {
+    public FishEvent(FishingPlugin plugin) {
         this.plugin = plugin;
     }
 

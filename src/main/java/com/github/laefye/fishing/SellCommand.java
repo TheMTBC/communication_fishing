@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class SellCommand implements CommandExecutor {
-    private final Fishing plugin;
+    private final FishingPlugin plugin;
 
-    public SellCommand(Fishing plugin) {
+    public SellCommand(FishingPlugin plugin) {
         this.plugin = plugin;
     }
 
