@@ -1,9 +1,9 @@
 package com.github.laefye.fishing;
 
+import com.github.laefye.MagicPlugin;
 import com.github.laefye.fishing.config.Lang;
 import com.github.laefye.fishing.config.loottable.LootEntry;
 import com.github.laefye.fishing.event.FishEvent;
-import com.github.laefye.services.item.CustomItemService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import net.milkbowl.vault.economy.Economy;
@@ -23,6 +23,7 @@ public final class FishingPlugin extends JavaPlugin {
     private final ArrayList<LootEntry> loots = new ArrayList<>();
     private Economy economy;
     private Lang lang;
+    private MagicPlugin magicPlugin;
 
     @Override
     public void onEnable() {
@@ -75,6 +76,7 @@ public final class FishingPlugin extends JavaPlugin {
                 economy = rsp.getProvider();
             }
         }
+        magicPlugin = MagicPlugin.getInstance();
     }
 
     public Lang getLang() {
@@ -105,13 +107,7 @@ public final class FishingPlugin extends JavaPlugin {
         economy.depositPlayer(player, amount);
     }
 
-    public static CustomItemService getCustomItemService(Server server) {
-        if (server.getPluginManager().getPlugin("MagicPlugin") != null) {
-            var rsp = server.getServicesManager().getRegistration(CustomItemService.class);
-            if (rsp != null) {
-                return rsp.getProvider();
-            }
-        }
-        return null;
+    public MagicPlugin getMagicPlugin() {
+        return magicPlugin;
     }
 }

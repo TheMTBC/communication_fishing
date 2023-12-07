@@ -47,22 +47,19 @@ public class ItemEntry {
 
     private ItemStack getItem(String id) {
         return id.startsWith("#") ?
-                FishingPlugin.getCustomItemService(plugin.getServer()).give(id.substring(1))
+                plugin.getMagicPlugin().getItemManager().give(id.substring(1))
                         .orElse(ItemStack.empty()) :
                 new ItemStack(Material.valueOf(id));
     }
 
     public ItemStack getItemStack() {
-        var originalItemStack = getItem(material);
-        var itemStack = Optional.ofNullable(nbt)
-                .map(Compound::fromJsonObject)
-                .or(() -> Optional.of(new Compound()))
-                .map(compound -> {
-                    Optional.ofNullable(cost)
-                            .ifPresent(integer -> compound.putInt(FISHING_COST, cost));
-                    return ItemTools.setItemTag(originalItemStack, compound);
-                })
-                .orElse(originalItemStack);
+        var itemStack = getItem(material);
+        var compound = new Compound();
+        Optional.ofNullable(cost)
+                .ifPresent(integer -> compound.putInt(FISHING_COST, cost));
+        Optional.ofNullable(nbt)
+                .ifPresent(jsonObject -> Compound.appendFromJsonObject(compound, jsonObject));
+        itemStack = ItemTools.setItemTag(itemStack, compound);;
         Optional.ofNullable(itemStack.getItemMeta()).map(this::itemMeta).ifPresent(itemStack::setItemMeta);
         return itemStack;
     }
@@ -85,6 +82,6 @@ public class ItemEntry {
     }
 
     public static int getCost(ItemStack itemStack) {
-        return ItemTools.getItemTag(itemStack).map(compound -> compound.getInt(FISHING_COST)).orElse(0);
+        return ItemTools.getItemTag(itemStack).map(compound -> compound.getInt(FISHING_COST) * itemStack.getAmount()).orElse(0);
     }
 }
