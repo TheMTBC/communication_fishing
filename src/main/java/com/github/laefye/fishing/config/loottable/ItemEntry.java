@@ -6,6 +6,7 @@ import com.github.laefye.fishing.FishingPlugin;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Stream;
 
 public class ItemEntry {
     private final String material;
@@ -56,8 +58,13 @@ public class ItemEntry {
         }
 
         private ItemMeta itemMeta(ItemMeta itemMeta) {
-            Optional.ofNullable(title).ifPresent(itemMeta::displayName);
-            Optional.ofNullable(lore).ifPresent(itemMeta::lore);
+            Optional.ofNullable(title).map(component -> Component.text().decoration(TextDecoration.ITALIC, false)
+                    .append(component).build())
+                    .ifPresent(itemMeta::displayName);
+            Optional.ofNullable(lore)
+                    .map(components -> lore.stream().map(component -> Component.text().decoration(TextDecoration.ITALIC, false).append(component).build()))
+                    .map(Stream::toList)
+                    .ifPresent(itemMeta::lore);
             return itemMeta;
         }
 

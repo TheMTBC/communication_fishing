@@ -65,7 +65,7 @@ public class Sell extends Ui {
             event.setCancelled(true);
             return;
         }
-        if (ItemEntry.getCost(event.getCursor()) <= 0 && !event.getCursor().isEmpty()) {
+        if (ItemEntry.getCost(event.getCursor()) <= 0) {
             event.setCancelled(true);
         }
     }
