@@ -1,7 +1,6 @@
 package com.github.laefye.fishing;
 
 import com.github.laefye.fishing.config.loottable.ItemEntry;
-import com.github.laefye.fishing.ui.Sell;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,11 +38,10 @@ public class SellCommand implements CommandExecutor {
         if (!(commandSender instanceof Player player)) {
             return false;
         }
-//        int amount = sell(player);
-//        if (amount > 0) {
-//            player.sendMessage(plugin.getLang().getSold(amount));
-//        }
-        plugin.getMagicPlugin().getUiManager().open(player, new Sell(plugin));
+        int amount = sell(player);
+        if (amount > 0) {
+            player.sendMessage(plugin.getLang().getSold(amount));
+        }
         return true;
     }
 }
