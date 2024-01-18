@@ -37,4 +37,4 @@ jobs:
     - name: Artifact
       uses: actions/download-artifact@v4.1.1
       with:
-        path: build/libs/Fishing-1.20.2-1.jar
+        path: build
