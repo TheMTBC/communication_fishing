@@ -35,6 +35,6 @@ jobs:
       with:
         arguments: build
     - name: Artifact
-      uses: actions/download-artifact@v4.1.1
+      uses: actions/upload-artifact@v4.1.0
       with:
         path: build
